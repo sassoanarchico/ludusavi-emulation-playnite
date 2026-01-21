@@ -18,7 +18,8 @@ jobs:
       - run: |
           pip install pre-commit
           dotnet tool install -g dotnet-format
-          pre-commit run --all-files --show-diff-on-failure
+      - name: Run pre-commit hooks
+        run: pre-commit run --all-files
 
   build:
     runs-on: windows-latest

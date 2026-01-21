@@ -82,13 +82,13 @@ namespace LudusaviPlaynite
                     foreach (var defaultMapping in defaults)
                     {
                         var matchKeyLower = (defaultMapping.EmulatorMatch ?? "").ToLowerInvariant();
-                        
+
                         // Check if emulator name or install dir contains the match key
                         if (emulatorNameLower.Contains(matchKeyLower) || emulatorInstallDirLower.Contains(matchKeyLower))
                         {
                             // Use emulator name as the match key for better accuracy
                             var actualMatchKey = emulator.Name.ToLowerInvariant();
-                            
+
                             if (!existingMatches.Contains(actualMatchKey) && !existingMatches.Contains(matchKeyLower))
                             {
                                 var newMapping = defaultMapping.Clone();

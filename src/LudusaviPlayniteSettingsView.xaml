@@ -98,11 +98,11 @@
                     <Button Content="{Binding ClearAllMappings_Label}" Click="OnClearAllMappings" Margin="10,0,0,0" Padding="8,4" />
                 </StackPanel>
 
-                <DataGrid ItemsSource="{Binding EmulatedSaveMappings}" 
-                          AutoGenerateColumns="False" 
-                          CanUserAddRows="True" 
-                          CanUserDeleteRows="True" 
-                          HeadersVisibility="Column" 
+                <DataGrid ItemsSource="{Binding EmulatedSaveMappings}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True"
+                          CanUserDeleteRows="True"
+                          HeadersVisibility="Column"
                           MinHeight="250"
                           MaxHeight="400"
                           HorizontalScrollBarVisibility="Auto"
