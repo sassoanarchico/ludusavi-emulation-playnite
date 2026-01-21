@@ -1,0 +1,149 @@
+﻿<UserControl x:Class="LudusaviPlaynite.LudusaviPlayniteSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="600">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <StackPanel>
+            <StackPanel Margin="15">
+                <TextBlock Text="{Binding ExecutablePath_Label}" />
+                <TextBox Margin="0,2,0,0" Text="{Binding ExecutablePath}" />
+                <StackPanel Margin="0,2,0,0" Orientation="Horizontal">
+                    <Button Content="{Binding BrowseButton_Label}" Click="OnBrowseExecutablePath" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <CheckBox IsChecked="{Binding OverrideBackupPath}" Content="{Binding BackupPath_Label}" />
+                <TextBox Margin="25,2,0,0" Text="{Binding BackupPath}" />
+                <StackPanel Margin="25,2,0,0" Orientation="Horizontal">
+                    <Button Content="{Binding BrowseButton_Label}" Click="OnBrowseBackupPath" />
+                    <Button Margin="10,0,0,0" Content="{Binding OpenButton_Label}" Click="OnOpenBackupPath" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox IsChecked="{Binding OverrideBackupFormat}" Content="{Binding OverrideBackupFormat_Label}" />
+                    <ComboBox Margin="10,0,0,0" ItemsSource="{Binding Path=BackupFormatOptions}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=BackupFormat, Mode=TwoWay}" />
+                </StackPanel>
+
+                <StackPanel Margin="0,2,0,0" Orientation="Horizontal">
+                    <CheckBox Margin="0,0,0,0" IsChecked="{Binding OverrideBackupCompression}" Content="{Binding OverrideBackupCompression_Label}" />
+                    <ComboBox Margin="10,0,0,0" ItemsSource="{Binding Path=BackupCompressionOptions}" DisplayMemberPath="Value" SelectedValuePath="Key" SelectedValue="{Binding Path=BackupCompression, Mode=TwoWay}" />
+                </StackPanel>
+
+                <CheckBox Margin="0,2,0,0" IsChecked="{Binding OverrideBackupRetention}" Content="{Binding OverrideBackupRetention_Label}" />
+                <StackPanel Margin="25,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label Content="{Binding FullBackupLimit_Label}" />
+                    <TextBox Margin="10,0,0,0" MinWidth="50" Text="{Binding FullBackupLimit}" />
+                    <TextBlock Margin="10,2,0,0" Text="(1-255)" />
+                </StackPanel>
+                <StackPanel Margin="25,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Label Content="{Binding DifferentialBackupLimit_Label}" />
+                    <TextBox Margin="10,0,0,0" MinWidth="50" Text="{Binding DifferentialBackupLimit}" />
+                    <TextBlock Margin="10,2,0,0" Text="(0-255)" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <CheckBox IsChecked="{Binding DoBackupOnGameStopped}" Content="{Binding DoBackupOnGameStopped_Label}" />
+                <CheckBox Margin="25,2,0,0" IsChecked="{Binding AskBackupOnGameStopped}" Content="{Binding AskBackupOnGameStopped_Label}" />
+                <CheckBox Margin="25,2,0,0" IsChecked="{Binding OnlyBackupOnGameStoppedIfPc}" Content="{Binding OnlyBackupOnGameStoppedIfPc_Label}" />
+                <CheckBox Margin="25,2,0,0" IsChecked="{Binding DoRestoreOnGameStarting}" Content="{Binding DoRestoreOnGameStarting_Label}" />
+                <CheckBox Margin="25,2,0,0" IsChecked="{Binding RetryUnrecognizedGameWithNormalization}" Content="{Binding RetryUnrecognizedGameWithNormalization_Label}" />
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <CheckBox IsChecked="{Binding AddSuffixForNonPcGameNames}" Content="{Binding AddSuffixForNonPcGameNames_Label}" />
+                <TextBox Margin="25,2,0,0" Text="{Binding SuffixForNonPcGameNames}" />
+                <CheckBox Margin="0,2,0,0" IsChecked="{Binding RetryNonPcGamesWithoutSuffix}" Content="{Binding RetryNonPcGamesWithoutSuffix_Label}" />
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <CheckBox IsChecked="{Binding DoPlatformBackupOnNonPcGameStopped}" Content="{Binding DoPlatformBackupOnNonPcGameStopped_Label}" />
+                <CheckBox Margin="25,2,0,0" IsChecked="{Binding AskPlatformBackupOnNonPcGameStopped}" Content="{Binding AskPlatformBackupOnNonPcGameStopped_Label}" />
+                <CheckBox Margin="25,2,0,0" IsChecked="{Binding DoPlatformRestoreOnNonPcGameStarting}" Content="{Binding DoPlatformRestoreOnNonPcGameStarting_Label}" />
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <CheckBox IsChecked="{Binding TagGamesWithBackups}" Content="{Binding TagGamesWithBackups_Label}" />
+                <CheckBox IsChecked="{Binding TagGamesWithUnknownSaveData}" Content="{Binding TagGamesWithUnknownSaveData_Label}" />
+                <CheckBox Margin="0,2,0,0" IsChecked="{Binding DoBackupDuringPlay}" Content="{Binding DoBackupDuringPlay_Label}" />
+                <StackPanel Margin="0,2,0,0" Orientation="Horizontal">
+                    <Label Margin="25,2,0,0" Content="{Binding BackupDuringPlayInterval_Label}" />
+                    <TextBox Margin="10,2,0,0" MinWidth="50" Text="{Binding BackupDuringPlayInterval}" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <CheckBox IsChecked="{Binding IgnoreBenignNotifications}" Content="{Binding IgnoreBenignNotifications_Label}" />
+                <CheckBox IsChecked="{Binding AskWhenMultipleGamesAreRunning}" Content="{Binding AskWhenMultipleGamesAreRunning_Label}" />
+                <CheckBox Margin="0,2,0,0" IsChecked="{Binding CheckAppUpdate}" Content="{Binding CheckAppUpdate_Label}" />
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <TextBlock Text="{Binding RPCS3SaveDataPath_Label}" />
+                <TextBox Margin="0,2,0,10" Text="{Binding RPCS3SaveDataPath}" />
+
+                <CheckBox IsChecked="{Binding EnableEmulatedGameAutomation}" Content="{Binding EnableEmulatedGameAutomation_Label}" />
+                <TextBlock Margin="0,6,0,0" Text="{Binding EmulatedGameTitleFormat_Label}" />
+                <TextBox Margin="0,2,0,0" Text="{Binding EmulatedGameTitleFormat}" />
+
+                <TextBlock Margin="0,10,0,0" Text="{Binding EmulatedSaveMappings_Label}" />
+                <TextBlock Margin="0,2,0,6" Opacity="0.8" TextWrapping="Wrap" Text="{Binding EmulatedSaveMappings_Help}" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                    <Button Content="{Binding LoadDefaultMappings_Label}" Click="OnLoadDefaultMappings" Padding="8,4" />
+                    <Button Content="{Binding ClearAllMappings_Label}" Click="OnClearAllMappings" Margin="10,0,0,0" Padding="8,4" />
+                </StackPanel>
+
+                <DataGrid ItemsSource="{Binding EmulatedSaveMappings}" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="True" 
+                          CanUserDeleteRows="True" 
+                          HeadersVisibility="Column" 
+                          MinHeight="250"
+                          MaxHeight="400"
+                          HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto">
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="On" Binding="{Binding Enabled}" Width="35" />
+                        <DataGridTextColumn Header="Emulator" Binding="{Binding EmulatorMatch}" Width="100">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="ToolTip" Value="{Binding EmulatorMatch}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Platform" Binding="{Binding Platform}" Width="110">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="ToolTip" Value="{Binding Platform}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Save path templates" Binding="{Binding SavePathTemplates}" Width="350">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    <Setter Property="ToolTip" Value="{Binding SavePathTemplates}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                            <DataGridTextColumn.EditingElementStyle>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="AcceptsReturn" Value="True"/>
+                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                    <Setter Property="MinHeight" Value="60"/>
+                                    <Setter Property="MaxHeight" Value="150"/>
+                                    <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+                                </Style>
+                            </DataGridTextColumn.EditingElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

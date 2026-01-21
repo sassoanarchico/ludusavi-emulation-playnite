@@ -1,0 +1,37 @@
+on:
+  - push
+  - pull_request
+
+name: Main
+
+jobs:
+  pre-commit:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: |
+          pip install pre-commit
+          dotnet tool install -g dotnet-format
+          pre-commit run --all-files --show-diff-on-failure
+
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          pip install invoke pyyaml
+          invoke build
+
+          mkdir tmp
+          curl -L -O https://github.com/JosefNemec/Playnite/releases/download/10.9/Playnite109.zip
+          unzip Playnite109.zip -d tmp/playnite
+          invoke pack --toolbox ./tmp/playnite/Toolbox.exe
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          path: |
+            dist/*.pext
+            dist/*.zip

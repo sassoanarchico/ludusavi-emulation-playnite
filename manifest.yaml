@@ -1,0 +1,344 @@
+AddonId: mtkennerly.ludusavi
+Packages:
+  - Version: 0.18.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2025-11-25
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.18.1/ludusavi-playnite-v0.18.1.pext
+    Changelog:
+      - >-
+        After editing the plugin settings to change the backup folder,
+        backups from the previous folder were still listed for each game
+        until you restarted Playnite.
+      - >-
+        Because of an encoding issue, depending on your system's regional settings,
+        backups were not always listed for games whose titles contained extended characters.
+  - Version: 0.18.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2025-11-10
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.18.0/ludusavi-playnite-v0.18.0.pext
+    Changelog:
+      - >-
+        Added: The context menu now indicates when a backup is locked.
+        ([Contributed by darklinkpower](https://github.com/mtkennerly/ludusavi-playnite/pull/96))
+      - >-
+        Added: The context menu now lets you open Ludusavi to add/edit a game's custom entry.
+        This requires Ludusavi v0.30.0 or newer.
+      - >-
+        Added: The context menu now lets you (un)lock a backup and edit its comment.
+        This requires Ludusavi v0.30.0 or newer.
+      - >-
+        Changed: Updated translations, including a new translation for Turkish.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+  - Version: 0.17.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2025-05-07
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.17.1/ludusavi-playnite-v0.17.1.pext
+    Changelog:
+      - >-
+        Fixed: With the `Require confirmation when multiple games are running` option enabled,
+        the confirmation dialog contained "always" and "never" options
+        that didn't make sense in context.
+        These are now removed.
+      - >-
+        Fixed: With the `Require confirmation when multiple games are running` option enabled,
+        the confirmation could trigger by mistake when other plugins had cancelled a game launch.
+      - >-
+        Changed: Updated translations, including a new translation for French.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+  - Version: 0.17.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2025-04-22
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.17.0/ludusavi-playnite-v0.17.0.pext
+    Changelog:
+      - >-
+        Added: New option: `Require confirmation when multiple games are running`.
+        This can be useful if you play multiple games at the same time that share save data
+        (particularly for platform-based backups),
+        so you can prevent automatic backup/restore when more than one game is running.
+      - >-
+        Fixed: If two games had the same plugin source and game ID,
+        then the wrong game could get backed up.
+      - >-
+        Changed: Updated translations, including a new translation for Arabic and Indonesian.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+  - Version: 0.16.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2024-08-23
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.16.0/ludusavi-playnite-v0.16.0.pext
+    Changelog:
+      - >-
+        Added: You can now open the backup directories for multiple selected games at once.
+      - >-
+        Added: The plugin will notify you when an update for Ludusavi is available.
+        This requires Ludusavi v0.25.0 or newer.
+        The check occurs at most once per 24 hours.
+      - >-
+        Fixed: The plugin now uses a buffered update when changing tags.
+        This should avoid issues where other plugins may respond to each tag change individually.
+        ([Contributed by Jeshibu](https://github.com/mtkennerly/ludusavi-playnite/pull/80))
+      - >-
+        Changed: Updated translations, including a new partial Norwegian translation.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+  - Version: 0.15.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2024-06-08
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.15.0/ludusavi-playnite-v0.15.0.pext
+    Changelog:
+      - >-
+        Added: In a game's context menu, backup comments are now displayed,
+        if any have been added in Ludusavi.
+        If a backup is from another OS than Windows, that is also indicated.
+      - >-
+        Added: In a game's context menu, you can now open that game's backup directory.
+        This requires Ludusavi v0.24.0 or newer.
+      - >-
+        Added: On startup, if Ludusavi cannot be found, then an error popup is displayed.
+        This should help users who did not realize they had to install Ludusavi itself
+        and who also missed the error notification.
+      - >-
+        Fixed: In some cases where Playnite and Ludusavi used different names for a game,
+        the game's context menu would not list its backups.
+        This now works properly in more cases if you use Ludusavi v0.24.0 or newer.
+      - >-
+        Changed: The recommended version of Ludusavi is now v0.24.0. You can download the latest release here:
+        https://github.com/mtkennerly/ludusavi/releases
+      - >-
+        Changed: In a game's context menu, backups are now sorted newest to oldest.
+  - Version: 0.14.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2024-04-27
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.14.0/ludusavi-playnite-v0.14.0.pext
+    Changelog:
+      - >-
+        Changed: Updated handling for the `restore` command for Ludusavi v0.23.0+,
+        which no longer returns an error when there is no data to restore.
+      - >-
+        Changed: Updated translations, including a new German translation.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+  - Version: 0.13.2
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2023-08-11
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.13.2/ludusavi-playnite-v0.13.2.pext
+    Changelog:
+      - >-
+        Fixed: Crash when changing plugin settings if some games had a null name.
+  - Version: 0.13.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2023-08-10
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.13.1/ludusavi-playnite-v0.13.1.pext
+    Changelog:
+      - >-
+        Fixed: Possible crash when saving plugin settings if the config file contained certain null values.
+      - >-
+        Changed: Updated translations.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+  - Version: 0.13.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2023-06-22
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.13.0/ludusavi-playnite-v0.13.0.pext
+    Changelog:
+      - >-
+        Added: Ludusavi 0.18.0+: The plugin will show a notification if cloud sync fails or has a conflict.
+      - >-
+        Added: You can now choose not to override the backup directory and defer to Ludusavi's own configuration.
+      - >-
+        Added: There is an option to automatically tag games with unknown save data.
+      - >-
+        Changed: Ludusavi 0.18.0+: The plugin no longer sets the `--merge` flag, since it has been deprecated.
+        It is still set for older Ludusavi versions.
+      - >-
+        Changed: Ludusavi 0.18.0+: The plugin now sets `--try-manifest-update` instead of `--try-update`.
+      - >-
+        Changed: Updated translations, including new translations for Japanese and Russian.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+      - >-
+        Fixed: The during-play backup feature did not check if a backup was already running before starting a new one.
+  - Version: 0.12.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2023-03-19
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.12.1/ludusavi-playnite-v0.12.1.pext
+    Changelog:
+      - >-
+        Fixed: If a game had multiple platforms listed in its metadata,
+        then it would not trigger any automatic backups before/during/after play
+        (manual backups worked as expected).
+        The plugin now properly handles games with multiple platforms.
+      - >-
+        Fixed: When distinguishing PC and non-PC games,
+        the plugin only considered the first platform listed in the game details.
+        It now considers all platforms listed.
+      - >-
+        Fixed: On confirmation prompts, the plugin would preemptively say
+        "this game requires a matching custom entry" for non-PC games.
+        However, that assumption isn't always true.
+        Now, the plugin just adds this message onto the error notification when Ludusavi doesn't recognize a game.
+      - >-
+        Fixed: If you had both game- and platform-based automatic backups enabled after play,
+        then the game backup might not be done yet when the platform backup was attempted,
+        resulting in the platform backup aborting.
+        The plugin now waits until the game backup is done before attempting the platform backup.
+      - >-
+        Changed: The recommended version of Ludusavi is now 0.16.0. You can download the latest release here:
+        https://github.com/mtkennerly/ludusavi/releases
+      - >-
+        Changed: Updated translations.
+        (Thanks to contributors on the [Crowdin project](https://crowdin.com/project/ludusavi-playnite))
+  - Version: 0.12.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2023-02-28
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.12.0/ludusavi-playnite-v0.12.0.pext
+    Changelog:
+      - >-
+        Added: An option to automatically tag games with backups. This requires Ludusavi 0.14.0 or newer.
+      - >-
+        Added: An option to look up games under a different name.
+        This allows you to resolve Playnite/Ludusavi naming discrepancies without creating a custom entry in Ludusavi.
+        Right now, this is simply a text box where you can enter the desired lookup name.
+        Once Ludusavi 0.16.0 is released, it will allow the plugin to show a searchable list of Ludusavi's known titles.
+      - >-
+        Fixed: Games could not be backed up if they had Unicode characters in their title (e.g., "Ninja Gaiden Σ").
+      - >-
+        Fixed: With older versions of Ludusavi, the plugin would report that there was nothing new to back up,
+        even if it did make a new backup.
+  - Version: 0.11.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-11-16
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.11.1/ludusavi-playnite-v0.11.1.pext
+    Changelog:
+      - >-
+        Fixed: Crash when trying to open a nonexistent folder from the settings window.
+      - >-
+        Changed: Updated translations.
+        (Thanks to contributors on the Crowdin project: https://crowdin.com/project/ludusavi-playnite)
+  - Version: 0.11.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-10-29
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.11.0/ludusavi-playnite-v0.11.0.pext
+    Changelog:
+      - >-
+        Added: The plugin now indicates when there was nothing new to back up or restore.
+        When doing a full scan, the expanded list also indicates new (+) or updated (Δ) for each game.
+        This is enabled if you have Ludusavi 0.14.0 or newer.
+      - >-
+        Added: When backing up or restoring a specific game,
+        the plugin now indicates when Ludusavi knows it by a different name.
+        Example: `Backed up saves for Playnite Title (↪ Ludusavi Title)`.
+        This is enabled if you have Ludusavi 0.14.0 or newer.
+      - >-
+        Added: An option to look up games by a normalization of their titles.
+        For example, this means the plugin can retry "Some Game: Special Edition (2022)" as just "Some Game"
+        if Ludusavi didn't recognize the original title.
+        If the normalized title produces multiple matches, the plugin chooses the first one.
+        This setting only takes effect if you have Ludusavi 0.14.0 or newer.
+      - >-
+        Added: Plugin settings to override the backup format, compression, and retention.
+        These will still default to whatever you have configured in Ludusavi itself,
+        but now you can override it from Playnite.
+        These settings only take effect if you have Ludusavi 0.14.0 or newer.
+      - >-
+        Added: On startup, the plugin will show a one-time notification
+        if a newer version of Ludusavi is recommended for the best experience.
+      - >-
+        Changed: When Ludusavi 0.14.0 or newer is installed, the plugin now uses the `find` command to look up games.
+        As a side effect, a game's Steam ID (if applicable) is now checked before its title rather than after.
+      - >-
+        Changed: For compatibility with Ludusavi 0.14.0, the plugin now passes `--force` to the backup command.
+        This remains compatible with older versions as well.
+  - Version: 0.10.2
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-09-12
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.10.2/ludusavi-playnite-v0.10.2.pext
+    Changelog:
+      - >-
+        Fixed: The extension's context menu section did not appear when selecting a single game
+        if the installed Ludusavi version did not support multi-backup.
+  - Version: 0.10.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-09-11
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.10.1/ludusavi-playnite-v0.10.1.pext
+    Changelog:
+      - >-
+        Fixed: Some errors were logged at info level.
+      - >-
+        Added: Updated translations.
+        (Thanks to contributors on the Crowdin project: https://crowdin.com/project/ludusavi-playnite)
+  - Version: 0.10.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-09-01
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.10.0/ludusavi-playnite-v0.10.0.pext
+    Changelog:
+      - >-
+        Added: Support for multiple backups per game. This requires Ludusavi 0.12.0 or newer.
+        You can open Ludusavi to configure how many backups to keep.
+        The feature will be disabled if an older version is detected.
+      - >-
+        Added: Support for automatic backups on an interval while playing a game.
+      - >-
+        Added: Translation for Italian.
+        (Thanks to contributors on the Crowdin project: https://crowdin.com/project/ludusavi-playnite)
+      - >-
+        Fixed: Disabled fallback restoration by Steam ID for Ludusavi versions older than
+        0.12.0 to avoid a defect in those versions.
+      - >-
+        Fixed: The plugin settings window now has a horizontal scroll bar when necessary.
+  - Version: 0.9.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-08-13
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.9.0/ludusavi-playnite-v0.9.0.pext
+    Changelog:
+      - >-
+        Added: Completed the translation for Simplified Chinese.
+        (Thanks to contributors on the Crowdin project: https://crowdin.com/project/ludusavi-playnite)
+  - Version: 0.8.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-07-11
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.8.1/ludusavi-playnite-v0.8.1.pext
+    Changelog:
+      - >-
+        Fixed: Handling of games whose name begins with a hyphen.
+        Previously, the plugin would not have been able to run Ludusavi for such games.
+      - >-
+        Fixed: Handling of games whose name contains quotation marks.
+        Previously, depending on the quote placement, the plugin may not have found
+        anything to back up for such games.
+  - Version: 0.8.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-07-07
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.8.0/ludusavi-playnite-v0.8.0.pext
+    Changelog:
+      - >-
+        Added - Translations for Simplified Chinese (partial), Polish, Brazilian Portuguese, and Spanish.
+        (Thanks to contributors on the Crowdin project: https://crowdin.com/project/ludusavi-playnite)
+      - >-
+        Changed - The plugin can now recognize when a game is on PC or Steam in more situations.
+        Specifically, it now checks the game's platform name and source plugin ID as well,
+        instead of just the platform specification ID and source name.
+  - Version: 0.7.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-05-27
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.7.0/ludusavi-playnite-v0.7.0.pext
+    Changelog:
+      - >-
+        Changed - Localization now uses Project Fluent (https://projectfluent.org) instead of pure C# code internally.
+        Although English currently remains the only language supported, this change
+        should make it easier for other people to contribute. If you'd like to help,
+        check out the new Crowdin project (https://crowdin.com/project/ludusavi-playnite).
+      - >-
+        Changed - The `ludusavi-skip` tag is now `[Ludusavi] Skip`.
+        If you were using the old tag, it will be automatically renamed for you.
+      - >-
+        Removed support for erri120's extension update notifier (https://github.com/erri120/Playnite.Extensions)
+        since Playnite now natively provides this functionality.
+      - Added - Game-specific context menu entries to add or remove Ludusavi-related tags.
+      - Added - Option to restore save data for a game before playing it.
+      - Added - Option to remember your choice when asked if you want to back up a game.
+      - Added - Several new tags to tweak behavior for individual games.
+      - >-
+        Fixed - When doing a backup or restore of specific games via their context menu,
+        the plugin did not check whether another backup/restore was already in progress.
+  - Version: 0.6.1
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2022-01-14
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.6.1/ludusavi-playnite-v0.6.1.pext
+    Changelog:
+      - Fixed - Crash when a game in Playnite did not have any platforms set.

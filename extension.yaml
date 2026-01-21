@@ -1,0 +1,14 @@
+﻿Id: mtkennerly.ludusavi
+Name: Ludusavi
+Author: Matthew T. Kennerly
+Version: 0.19.2
+Module: LudusaviPlaynite.dll
+Type: GenericPlugin
+Icon: icon.png
+Links:
+  - Name: Plugin homepage
+    Url: https://github.com/mtkennerly/ludusavi-playnite
+  - Name: Ludusavi homepage
+    Url: https://github.com/mtkennerly/ludusavi
+  - Name: Manifest homepage
+    Url: https://github.com/mtkennerly/ludusavi-manifest
