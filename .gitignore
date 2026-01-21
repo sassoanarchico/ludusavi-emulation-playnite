@@ -87,3 +87,7 @@ $RECYCLE_BIN/
 # Environment files
 .env
 .env.local
+
+# Personal scripts (keep locally, don't commit)
+*.ps1
+*.bat
