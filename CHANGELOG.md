@@ -1,3 +1,33 @@
+## v0.19.2 (2026-01-21)
+
+* Added:
+  * Custom logging system with daily log files and automatic rotation (keeps 30 days).
+  * Automatic support for RPCS3/PS3 games with automatic detection of PS3 game codes (BLES, BLUS, NPEA, etc.).
+  * Dynamic RPCS3 save folder search with partial matching.
+  * Setting for custom RPCS3 save data path.
+  * Improved error handling for custom game existence verification.
+* Changed:
+  * Improved log messages for exit codes with detailed descriptions.
+  * Removed alias field completely from custom games (instead of empty string).
+  * Paths converted to forward slash for YAML compatibility.
+  * More detailed logging for emulated operations.
+  * More robust error handling for custom game verification.
+* Fixed:
+  * Fixed repeated reconfiguration issue that corrupted config.yaml.
+  * Fixed exit code 101 for already configured custom games.
+  * Check custom game existence before using cached configuration.
+  * Automatic recreation of custom game if deleted from Ludusavi.
+  * Fixed log path issue (now uses GUID instead of plugin name).
+  * Correct handling of backslashes in Windows paths.
+  * Prevented config.yaml corruption during custom game existence verification.
+  * On error during verification, assumes custom game exists to avoid corruption.
+* Technical:
+  * New CustomLogger class for dedicated log management.
+  * New RPCS3SaveFinder class for automatic PS3 save detection.
+  * CustomGameExists method with improved error handling and detailed logging.
+  * Try-catch in TryAutoConfigureEmulatedGame to prevent configuration corruption.
+  * AlternativeTitle check before reconfiguring emulated games.
+
 ## v0.18.1 (2025-11-25)
 
 * Fixed:
