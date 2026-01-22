@@ -655,6 +655,16 @@ namespace LudusaviPlaynite
             return Translate("config-emulated-save-mappings-help");
         }
 
+        public string DisabledLibraries_Label()
+        {
+            return Translate("config-disabled-libraries");
+        }
+
+        public string DisabledLibraries_Help()
+        {
+            return Translate("config-disabled-libraries-help");
+        }
+
         public string OptionSimple()
         {
             return Translate("option-simple");

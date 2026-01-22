@@ -123,6 +123,9 @@ config-emulated-game-title-format = Emulated game title format (supports <name>,
 config-emulated-save-mappings = Emulator save mappings
 config-emulated-save-mappings-help = Add one row per emulator. Each row defines how to find saves for that emulator using templates like <romDir>, <romBase>, <romPath>, <emulatorDir>.
 
+config-disabled-libraries = Disable backup for libraries
+config-disabled-libraries-help = Select one or more libraries to disable backup prompts. Games from disabled libraries will not prompt for backup or restore operations.
+
 label-minutes = Minutes:
 
 

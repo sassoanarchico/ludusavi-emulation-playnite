@@ -186,6 +186,15 @@ namespace LudusaviPlaynite
         [JsonIgnore]
         public string ClearAllMappings_Label { get; set; }
 
+        // --- Disabled libraries (sources) ---
+        public List<string> DisabledLibraries { get; set; } = new List<string>();
+        [JsonIgnore]
+        public string DisabledLibraries_Label { get; set; }
+        [JsonIgnore]
+        public string DisabledLibraries_Help { get; set; }
+        [JsonIgnore]
+        public ObservableCollection<LibraryItem> AvailableLibraries { get; set; } = new ObservableCollection<LibraryItem>();
+
         // Parameterless constructor must exist if you want to use LoadPluginSettings method.
         public LudusaviPlayniteSettings()
         {
@@ -241,6 +250,8 @@ namespace LudusaviPlaynite
             EmulatedSaveMappings_Help = translator.EmulatedSaveMappings_Help();
             LoadDefaultMappings_Label = translator.LoadDefaultMappings_Label();
             ClearAllMappings_Label = translator.ClearAllMappings_Label();
+            DisabledLibraries_Label = translator.DisabledLibraries_Label();
+            DisabledLibraries_Help = translator.DisabledLibraries_Help();
 
             // Injecting your plugin instance is required for Save/Load method because Playnite saves data to a location based on what plugin requested the operation.
             this.plugin = plugin;
@@ -323,6 +334,10 @@ namespace LudusaviPlaynite
                 if (savedSettings.EmulatedSaveMappings != null && savedSettings.EmulatedSaveMappings.Count > 0)
                 {
                     EmulatedSaveMappings = new ObservableCollection<EmulatedSaveMapping>(savedSettings.EmulatedSaveMappings);
+                }
+                if (savedSettings.DisabledLibraries != null)
+                {
+                    DisabledLibraries = new List<string>(savedSettings.DisabledLibraries);
                 }
             }
             else
@@ -410,7 +425,43 @@ namespace LudusaviPlaynite
                 return new PlayPreferences();
             }
 
-            var gameBackupDo = (this.DoBackupOnGameStopped || Etc.HasTag(game, Tags.GAME_BACKUP) || Etc.HasTag(game, Tags.GAME_BACKUP_AND_RESTORE))
+            // Check if the game's library is disabled
+            bool isLibraryDisabled = false;
+            if (this.DisabledLibraries != null && this.DisabledLibraries.Count > 0)
+            {
+                string libraryName = null;
+                
+                // First try to get library name from Source
+                if (game?.Source != null && !string.IsNullOrEmpty(game.Source.Name))
+                {
+                    libraryName = game.Source.Name;
+                }
+                // If no Source, try to identify by PluginId
+                else if (game?.PluginId != null)
+                {
+                    // Empty Guid means manually added game (Playnite library)
+                    if (game.PluginId == Guid.Empty)
+                    {
+                        libraryName = "Playnite";
+                    }
+                    // For other cases, we'd need to check the plugin, but for now treat as Playnite
+                    // This could be enhanced to check plugin names if needed
+                    else
+                    {
+                        libraryName = "Playnite";
+                    }
+                }
+                else
+                {
+                    // Handle games without a Source or PluginId - treat as "Playnite" library
+                    libraryName = "Playnite";
+                }
+                
+                isLibraryDisabled = this.DisabledLibraries.Contains(libraryName);
+            }
+
+            var gameBackupDo = !isLibraryDisabled
+                && (this.DoBackupOnGameStopped || Etc.HasTag(game, Tags.GAME_BACKUP) || Etc.HasTag(game, Tags.GAME_BACKUP_AND_RESTORE))
                 && !Etc.HasTag(game, Tags.GAME_NO_BACKUP)
                 && (Etc.IsOnPc(game) || !this.OnlyBackupOnGameStoppedIfPc || Etc.HasTag(game, Tags.GAME_BACKUP) || Etc.HasTag(game, Tags.GAME_BACKUP_AND_RESTORE));
             

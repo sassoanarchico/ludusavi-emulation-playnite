@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -16,6 +16,78 @@ namespace LudusaviPlaynite
             InitializeComponent();
             this.plugin = plugin;
             this.translator = translator;
+            this.DataContext = plugin.settings;
+            InitializeLibraries();
+        }
+
+        private void InitializeLibraries()
+        {
+            // Initialize DisabledLibraries if null
+            if (this.plugin.settings.DisabledLibraries == null)
+            {
+                this.plugin.settings.DisabledLibraries = new List<string>();
+            }
+
+            // Get all unique libraries from games in Playnite database
+            // Libraries are identified by Source.Name when available
+            var libraryNames = new HashSet<string>();
+            
+            foreach (var game in this.plugin.PlayniteApi.Database.Games)
+            {
+                string libraryName = null;
+                
+                // Get library name from Source (this is the standard way in Playnite)
+                if (game?.Source != null && !string.IsNullOrEmpty(game.Source.Name))
+                {
+                    libraryName = game.Source.Name;
+                }
+                // If no Source, treat as Playnite (manually added games)
+                else
+                {
+                    libraryName = "Playnite";
+                }
+                
+                if (!string.IsNullOrEmpty(libraryName))
+                {
+                    libraryNames.Add(libraryName);
+                }
+            }
+
+            // Always include "Playnite" for manually added games
+            libraryNames.Add("Playnite");
+
+            // Sort libraries alphabetically
+            var sortedLibraries = libraryNames.OrderBy(l => l).ToList();
+
+            // Initialize AvailableLibraries
+            this.plugin.settings.AvailableLibraries.Clear();
+            foreach (var libraryName in sortedLibraries)
+            {
+                var libraryItem = new LibraryItem
+                {
+                    Name = libraryName,
+                    IsDisabled = this.plugin.settings.DisabledLibraries.Contains(libraryName)
+                };
+                libraryItem.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(LibraryItem.IsDisabled))
+                    {
+                        var item = s as LibraryItem;
+                        if (item.IsDisabled)
+                        {
+                            if (!this.plugin.settings.DisabledLibraries.Contains(item.Name))
+                            {
+                                this.plugin.settings.DisabledLibraries.Add(item.Name);
+                            }
+                        }
+                        else
+                        {
+                            this.plugin.settings.DisabledLibraries.Remove(item.Name);
+                        }
+                    }
+                };
+                this.plugin.settings.AvailableLibraries.Add(libraryItem);
+            }
         }
 
         public void OnBrowseExecutablePath(object sender, RoutedEventArgs e)

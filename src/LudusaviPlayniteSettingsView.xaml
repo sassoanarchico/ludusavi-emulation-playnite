@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="LudusaviPlaynite.LudusaviPlayniteSettingsView"
+<UserControl x:Class="LudusaviPlaynite.LudusaviPlayniteSettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -80,6 +80,18 @@
                 <CheckBox IsChecked="{Binding IgnoreBenignNotifications}" Content="{Binding IgnoreBenignNotifications_Label}" />
                 <CheckBox IsChecked="{Binding AskWhenMultipleGamesAreRunning}" Content="{Binding AskWhenMultipleGamesAreRunning_Label}" />
                 <CheckBox Margin="0,2,0,0" IsChecked="{Binding CheckAppUpdate}" Content="{Binding CheckAppUpdate_Label}" />
+            </StackPanel>
+
+            <StackPanel Margin="15">
+                <TextBlock Text="{Binding DisabledLibraries_Label}" FontWeight="Bold" />
+                <TextBlock Margin="0,2,0,6" Opacity="0.8" TextWrapping="Wrap" Text="{Binding DisabledLibraries_Help}" />
+                <ItemsControl ItemsSource="{Binding AvailableLibraries}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsDisabled, Mode=TwoWay}" Content="{Binding Name}" Margin="0,2,0,0" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </StackPanel>
 
             <StackPanel Margin="15">

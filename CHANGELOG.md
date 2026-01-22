@@ -3,6 +3,8 @@
 * Added:
   * GitHub Actions workflow to build and publish `.pext` and `.zip` packages as GitHub releases.
   * Additional logging and validation for emulated games and RPCS3 save paths to ensure correct backup and restore.
+  * Option to disable backup prompts for specific libraries (Steam, Epic, GOG, Uplay, Browser, etc.).
+    Games from disabled libraries will not prompt for backup or restore operations.
 * Changed:
   * Updated `.gitignore` to exclude local scripts, configuration files, and other developer-only artifacts from commits.
   * Simplified CI configuration by removing the pre-commit job and relying on local hooks for formatting.
