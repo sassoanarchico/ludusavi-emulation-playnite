@@ -1,5 +1,18 @@
 AddonId: mtkennerly.ludusavi
 Packages:
+  - Version: 0.19.3
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2026-01-22
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.19.3/ludusavi-playnite-v0.19.3.pext
+    Changelog:
+      - >-
+        Added: GitHub Actions workflow to build and publish .pext and .zip packages as GitHub releases.
+      - >-
+        Added: Improved automatic configuration and logging for emulated games and RPCS3 save paths.
+      - >-
+        Changed: Updated .gitignore and CI configuration to avoid committing local scripts and unnecessary files.
+      - >-
+        Fixed: Formatting issues detected by pre-commit hooks and improved validation of resolved save paths.
   - Version: 0.18.1
     RequiredApiVersion: 6.0.0
     ReleaseDate: 2025-11-25

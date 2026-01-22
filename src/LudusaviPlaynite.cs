@@ -820,13 +820,36 @@ namespace LudusaviPlaynite
             if (!paths.Any())
             {
                 error = "No save paths resolved.";
+                logger.Warn($"Failed to resolve save paths for emulated game: {game.Name}");
                 return false;
             }
 
-            if (!LudusaviConfigEditor.UpsertCustomGame(this.settings.ExecutablePath, customTitle, paths, out error))
+            // Validate that at least one path exists before configuring
+            var validPaths = paths.Where(p => !string.IsNullOrWhiteSpace(p) && (Directory.Exists(p) || File.Exists(p))).ToList();
+            if (!validPaths.Any())
             {
+                error = $"Resolved save paths do not exist: {string.Join(", ", paths)}";
+                logger.Warn($"All resolved paths for emulated game '{game.Name}' do not exist. Paths: {string.Join(", ", paths)}");
+                // Still proceed with configuration - paths might be created later or Ludusavi will handle it
+                validPaths = paths.Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+                if (!validPaths.Any())
+                {
+                    return false;
+                }
+            }
+            
+            logger.Info($"Valid paths for backup: {string.Join(", ", validPaths)}");
+
+            // Use valid paths if we filtered them, otherwise use all resolved paths
+            var pathsToUse = validPaths.Any() ? validPaths : paths;
+            
+            if (!LudusaviConfigEditor.UpsertCustomGame(this.settings.ExecutablePath, customTitle, pathsToUse, out error))
+            {
+                logger.Error($"Failed to upsert custom game '{customTitle}' with paths: {string.Join(", ", pathsToUse)}. Error: {error}");
                 return false;
             }
+            
+            logger.Info($"Successfully configured custom game '{customTitle}' with {pathsToUse.Count} path(s)");
 
             // Persist a stable lookup name so subsequent backups/restores use the created custom entry.
             this.settings.AlternativeTitles[game.Name] = customTitle;

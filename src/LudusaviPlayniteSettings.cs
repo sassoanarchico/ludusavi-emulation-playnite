@@ -413,7 +413,12 @@ namespace LudusaviPlaynite
             var gameBackupDo = (this.DoBackupOnGameStopped || Etc.HasTag(game, Tags.GAME_BACKUP) || Etc.HasTag(game, Tags.GAME_BACKUP_AND_RESTORE))
                 && !Etc.HasTag(game, Tags.GAME_NO_BACKUP)
                 && (Etc.IsOnPc(game) || !this.OnlyBackupOnGameStoppedIfPc || Etc.HasTag(game, Tags.GAME_BACKUP) || Etc.HasTag(game, Tags.GAME_BACKUP_AND_RESTORE));
-            var platformBackupDo = (this.DoPlatformBackupOnNonPcGameStopped || Etc.HasTag(game, Tags.PLATFORM_BACKUP) || Etc.HasTag(game, Tags.PLATFORM_BACKUP_AND_RESTORE))
+            
+            // Don't offer platform backup for non-PC games when emulated game automation is enabled
+            // because emulated games are automatically configured with their specific save paths,
+            // so platform-level backup is redundant and confusing
+            var platformBackupDo = !this.EnableEmulatedGameAutomation
+                && (this.DoPlatformBackupOnNonPcGameStopped || Etc.HasTag(game, Tags.PLATFORM_BACKUP) || Etc.HasTag(game, Tags.PLATFORM_BACKUP_AND_RESTORE))
                 && !Etc.HasTag(game, Tags.PLATFORM_NO_BACKUP)
                 && !Etc.IsOnPc(game)
                 && Etc.GetGamePlatform(game) != null;
