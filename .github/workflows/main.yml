@@ -1,36 +1,67 @@
-on:
-  - push
-  - pull_request
+name: Build and Release .pext
 
-name: Main
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  build-release:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x'
-      - uses: actions/setup-python@v5
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install dependencies
+
+      - name: Install Python dependencies
         run: |
           pip install invoke pyyaml
-      - name: Build
+
+      - name: Read version from extension.yaml
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $line = Select-String -Path "extension.yaml" -Pattern "^\s*Version\s*:" | Select-Object -First 1
+          if (-not $line) { throw "Version not found in extension.yaml" }
+          $version = ($line.Line -split ":", 2)[1].Trim()
+          if (-not $version) { throw "Parsed version is empty" }
+
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "TAG=v$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Build (Release)
         run: invoke build
+
       - name: Download Playnite Toolbox
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path tmp
+          $ErrorActionPreference = "Stop"
+          New-Item -ItemType Directory -Force -Path tmp | Out-Null
           Invoke-WebRequest -Uri "https://github.com/JosefNemec/Playnite/releases/download/10.9/Playnite109.zip" -OutFile "Playnite109.zip"
           Expand-Archive -Path "Playnite109.zip" -DestinationPath "tmp/playnite" -Force
+
       - name: Pack extension
         run: invoke pack --toolbox ./tmp/playnite/Toolbox.exe
-      - uses: actions/upload-artifact@v4
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: artifacts
-          path: |
-            dist/*.pext
-            dist/*.zip
+          tag_name: v${{ env.VERSION }}
+          name: LudusaviPlaynite v${{ env.VERSION }}
+          files: |
+            dist/ludusavi-playnite-v${{ env.VERSION }}.pext
+            dist/ludusavi-playnite-v${{ env.VERSION }}.zip
