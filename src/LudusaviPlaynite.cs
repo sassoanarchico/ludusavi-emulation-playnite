@@ -731,7 +731,7 @@ namespace LudusaviPlaynite
             if (!string.IsNullOrEmpty(existingTitle))
             {
                 logger.Debug($"Found existing alternative title for '{game.Name}': '{existingTitle}'");
-                
+
                 // Verify the custom game still exists in Ludusavi config
                 try
                 {
@@ -807,14 +807,14 @@ namespace LudusaviPlaynite
             // Resolve save paths based on templates.
             info.Platform = platformLabel;
             info.EmulatorName = emulatorLabel;
-            
+
             // Log info for debugging
             logger.Info($"Emulated game auto-config: {game.Name} | GameId: {info.GameId} | Emulator: {info.EmulatorName} | Platform: {platformLabel}");
             logger.Info($"Template: {match.SavePathTemplates}");
-            
+
             // For RPCS3, try to extract PS3 game code and find save folder dynamically
             var paths = EmulatedSaveTemplate.ResolveMany(info, match.SavePathTemplates, game.Name, settings.RPCS3SaveDataPath);
-            
+
             logger.Info($"Resolved paths: {string.Join(", ", paths)}");
 
             if (!paths.Any())
@@ -837,18 +837,18 @@ namespace LudusaviPlaynite
                     return false;
                 }
             }
-            
+
             logger.Info($"Valid paths for backup: {string.Join(", ", validPaths)}");
 
             // Use valid paths if we filtered them, otherwise use all resolved paths
             var pathsToUse = validPaths.Any() ? validPaths : paths;
-            
+
             if (!LudusaviConfigEditor.UpsertCustomGame(this.settings.ExecutablePath, customTitle, pathsToUse, out error))
             {
                 logger.Error($"Failed to upsert custom game '{customTitle}' with paths: {string.Join(", ", pathsToUse)}. Error: {error}");
                 return false;
             }
-            
+
             logger.Info($"Successfully configured custom game '{customTitle}' with {pathsToUse.Count} path(s)");
 
             // Persist a stable lookup name so subsequent backups/restores use the created custom entry.

@@ -53,7 +53,7 @@ namespace LudusaviPlaynite
                 // Do NOT use alias - always put the game name in the "name" field
                 existing.Children[new YamlScalarNode("name")] = new YamlScalarNode(gameName);
                 existing.Children[new YamlScalarNode("integration")] = new YamlScalarNode("override");
-                
+
                 // Remove alias completely if it exists - we want Ludusavi to use "name" not "alias"
                 var aliasKey = new YamlScalarNode("alias");
                 if (existing.Children.ContainsKey(aliasKey))
@@ -63,7 +63,7 @@ namespace LudusaviPlaynite
 
                 var filesNode = new YamlSequenceNode(list.Select(x => (YamlNode)new YamlScalarNode(x)));
                 existing.Children[new YamlScalarNode("files")] = filesNode;
-                
+
                 // Ensure other required fields are present
                 if (!existing.Children.ContainsKey(new YamlScalarNode("registry")))
                 {
@@ -186,7 +186,7 @@ namespace LudusaviPlaynite
 
                 var root = (YamlMappingNode)yaml.Documents[0].RootNode;
                 var customGames = EnsureSequence(root, "customGames");
-                
+
                 var exists = FindCustomGame(customGames, gameName) != null;
                 return exists;
             }
@@ -199,6 +199,3 @@ namespace LudusaviPlaynite
         }
     }
 }
-
-
-

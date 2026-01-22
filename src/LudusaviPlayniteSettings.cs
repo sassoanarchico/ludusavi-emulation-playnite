@@ -430,7 +430,7 @@ namespace LudusaviPlaynite
             if (this.DisabledLibraries != null && this.DisabledLibraries.Count > 0)
             {
                 string libraryName = null;
-                
+
                 // First try to get library name from Source
                 if (game?.Source != null && !string.IsNullOrEmpty(game.Source.Name))
                 {
@@ -456,7 +456,7 @@ namespace LudusaviPlaynite
                     // Handle games without a Source or PluginId - treat as "Playnite" library
                     libraryName = "Playnite";
                 }
-                
+
                 isLibraryDisabled = this.DisabledLibraries.Contains(libraryName);
             }
 
@@ -464,7 +464,7 @@ namespace LudusaviPlaynite
                 && (this.DoBackupOnGameStopped || Etc.HasTag(game, Tags.GAME_BACKUP) || Etc.HasTag(game, Tags.GAME_BACKUP_AND_RESTORE))
                 && !Etc.HasTag(game, Tags.GAME_NO_BACKUP)
                 && (Etc.IsOnPc(game) || !this.OnlyBackupOnGameStoppedIfPc || Etc.HasTag(game, Tags.GAME_BACKUP) || Etc.HasTag(game, Tags.GAME_BACKUP_AND_RESTORE));
-            
+
             // Don't offer platform backup for non-PC games when emulated game automation is enabled
             // because emulated games are automatically configured with their specific save paths,
             // so platform-level backup is redundant and confusing

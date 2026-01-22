@@ -137,4 +137,3 @@ button-clear-all-mappings = Cancella tutte le mappature
 load-default-mappings-confirm = Caricare le mappature di salvataggio predefinite degli emulatori? Questo aggiungerà emulatori comuni (se non già presenti) come RPCS3, DeSmuME, Dolphin, PCSX2 e altri.
 clear-all-mappings-confirm = Sei sicuro di voler cancellare tutte le mappature di salvataggio degli emulatori?
 emulated-game-configured = Gioco emulato configurato: { $game } → { $customTitle }
-

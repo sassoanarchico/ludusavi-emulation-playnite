@@ -646,7 +646,7 @@ namespace LudusaviPlaynite
                 {
                     var searchPaths = RPCS3SaveFinder.GetCommonRPCS3SavePaths(info?.EmulatorExecutablePath, customRpcs3Path);
                     var saveFolder = RPCS3SaveFinder.FindSaveFolderInMultiplePaths(searchPaths, gameCode);
-                    
+
                     if (!string.IsNullOrEmpty(saveFolder))
                     {
                         resolved.Add(saveFolder);
@@ -713,5 +713,3 @@ namespace LudusaviPlaynite
         }
     }
 }
-
-

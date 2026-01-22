@@ -89,7 +89,7 @@ namespace LudusaviPlaynite.Cli
             try
             {
                 response = JsonConvert.DeserializeObject<Output.Response>(stdout);
-                
+
                 // Log più descrittivo basato sull'exit code
                 if (code == 0)
                 {

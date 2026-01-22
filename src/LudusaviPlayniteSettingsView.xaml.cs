@@ -31,11 +31,11 @@ namespace LudusaviPlaynite
             // Get all unique libraries from games in Playnite database
             // Libraries are identified by Source.Name when available
             var libraryNames = new HashSet<string>();
-            
+
             foreach (var game in this.plugin.PlayniteApi.Database.Games)
             {
                 string libraryName = null;
-                
+
                 // Get library name from Source (this is the standard way in Playnite)
                 if (game?.Source != null && !string.IsNullOrEmpty(game.Source.Name))
                 {
@@ -46,7 +46,7 @@ namespace LudusaviPlaynite
                 {
                     libraryName = "Playnite";
                 }
-                
+
                 if (!string.IsNullOrEmpty(libraryName))
                 {
                     libraryNames.Add(libraryName);

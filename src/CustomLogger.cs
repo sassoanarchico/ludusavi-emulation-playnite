@@ -16,7 +16,7 @@ namespace LudusaviPlaynite
         {
             this.playniteLogger = playniteLogger;
             this.logDirectory = logDirectory;
-            
+
             // Crea la directory se non esiste
             if (!Directory.Exists(logDirectory))
             {
@@ -26,10 +26,10 @@ namespace LudusaviPlaynite
             // Crea il percorso del file di log con timestamp
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd");
             logFilePath = Path.Combine(logDirectory, $"LudusaviPlaynite_{timestamp}.log");
-            
+
             // Pulisci i vecchi file di log (più vecchi di 30 giorni)
             CleanOldLogFiles(30);
-            
+
             // Scrivi intestazione
             WriteToFile($"=== LudusaviPlaynite Log Started at {DateTime.Now:yyyy-MM-dd HH:mm:ss} ===");
         }
