@@ -1,18 +1,8 @@
 ## v0.19.3 (2026-01-22)
 
 * Added:
-  * GitHub Actions workflow to build and publish `.pext` and `.zip` packages as GitHub releases.
-  * Additional logging and validation for emulated games and RPCS3 save paths to ensure correct backup and restore.
   * Option to disable backup prompts for specific libraries (Steam, Epic, GOG, Uplay, Browser, etc.).
     Games from disabled libraries will not prompt for backup or restore operations.
-* Changed:
-  * Updated `.gitignore` to exclude local scripts, configuration files, and other developer-only artifacts from commits.
-  * Simplified CI configuration by removing the pre-commit job and relying on local hooks for formatting.
-* Fixed:
-  * Resolved formatting issues detected by pre-commit hooks (trailing whitespace and end-of-file problems).
-  * Improved handling when resolved emulated save paths do not exist, with clearer logging and safer configuration.
-  * Platform backup prompt no longer appears for emulated games when automatic emulated game configuration is enabled,
-    since the game itself is already configured with the correct save paths, making platform-level backup redundant.
 
 ## v0.19.2 (2026-01-21)
 
@@ -43,6 +33,25 @@
   * CustomGameExists method with improved error handling and detailed logging.
   * Try-catch in TryAutoConfigureEmulatedGame to prevent configuration corruption.
   * AlternativeTitle check before reconfiguring emulated games.
+
+## v0.19.1 (2026-01-20)
+
+* Added:
+  * Additional logging and validation for emulated games and RPCS3 save paths to ensure correct backup and restore.
+* Fixed:
+  * Improved handling when resolved emulated save paths do not exist, with clearer logging and safer configuration.
+  * Platform backup prompt no longer appears for emulated games when automatic emulated game configuration is enabled,
+    since the game itself is already configured with the correct save paths, making platform-level backup redundant.
+
+## v0.19.0 (2026-01-19)
+
+* Added:
+  * GitHub Actions workflow to build and publish `.pext` and `.zip` packages as GitHub releases.
+* Changed:
+  * Updated `.gitignore` to exclude local scripts, configuration files, and other developer-only artifacts from commits.
+  * Simplified CI configuration by removing the pre-commit job and relying on local hooks for formatting.
+* Fixed:
+  * Resolved formatting issues detected by pre-commit hooks (trailing whitespace and end-of-file problems).
 
 ## v0.18.1 (2025-11-25)
 
