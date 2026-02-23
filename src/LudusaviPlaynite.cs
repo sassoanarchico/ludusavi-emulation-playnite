@@ -590,6 +590,28 @@ namespace LudusaviPlaynite
             return new LudusaviPlayniteSettingsView(this, this.translator);
         }
 
+        public override IEnumerable<SidebarItem> GetSidebarItems()
+        {
+            return new List<SidebarItem>
+            {
+                new SidebarItem
+                {
+                    Title = "Ludusavi",
+                    Type = SiderbarItemType.View,
+                    Icon = new System.Windows.Controls.TextBlock
+                    {
+                        Text = "\uEF08",
+                        FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
+                        FontSize = 20
+                    },
+                    Opened = () =>
+                    {
+                        return new Views.LudusaviSidebarView(this);
+                    }
+                }
+            };
+        }
+
         public void Refresh(RefreshContext context)
         {
             switch (context)

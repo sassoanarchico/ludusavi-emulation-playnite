@@ -41,7 +41,7 @@ def pack(ctx, toolbox="~/AppData/Local/Playnite/Toolbox.exe"):
     if target.exists():
         shutil.rmtree(str(target))
     os.makedirs(str(target))
-    for file in glob(str(REPO / "src/bin/Release/net462/*")):
+    for file in glob(str(REPO / "src/bin/Release/net48/*")):
         shutil.copy(file, target)
 
     toolbox = Path(toolbox).expanduser()
@@ -62,7 +62,7 @@ def deploy(ctx, target="~/AppData/Roaming/Playnite/Extensions"):
     print(f"Creating: {target}")
     target.mkdir()
 
-    for file in glob(str(REPO / "src/bin/Release/net462/*")):
+    for file in glob(str(REPO / "src/bin/Release/net48/*")):
         shutil.copy(file, target)
 
 
