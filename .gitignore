@@ -68,6 +68,9 @@ ludusavi-test-config.yaml
 test-logs/
 test-deployment/
 
+# Log files (project logs)
+logs/
+
 # Local documentation files (not needed in repo)
 BUILD-README.md
 CHANGELOG.txt
@@ -91,3 +94,9 @@ $RECYCLE_BIN/
 # Personal scripts (keep locally, don't commit)
 *.ps1
 *.bat
+
+# Additional temporary directories
+temp_*/
+~/
+err/
+lib/

@@ -1,5 +1,25 @@
 AddonId: mtkennerly.ludusavi
 Packages:
+  - Version: 0.19.4
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2026-01-26
+    PackageUrl: https://github.com/mtkennerly/ludusavi-playnite/releases/download/v0.19.4/ludusavi-playnite-v0.19.4.pext
+    Changelog:
+      - >-
+        Fixed: Enhanced RPCS3 auto-configuration with comprehensive logging and improved titleid.txt scanning.
+        The system now logs all candidate codes found and tests each against save folders.
+      - >-
+        Fixed: RPCS3 path resolution now requires actual save folder existence before proceeding,
+        ensuring proper fallback to titleid.txt scanning when needed.
+      - >-
+        Added: Detailed startup logging to verify DLL version and titleid.txt file location.
+      - >-
+        Fixed: Games with PS3 platform are now automatically detected as RPCS3 emulated games,
+        even if they don't have an Emulator action configured in Playnite.
+      - >-
+        Fixed: Improved logging system with better error handling and directory creation verification.
+      - >-
+        Changed: titleid.txt moved to data/ directory for better repository organization.
   - Version: 0.19.3
     RequiredApiVersion: 6.0.0
     ReleaseDate: 2026-01-22

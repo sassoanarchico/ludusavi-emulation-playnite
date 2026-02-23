@@ -155,3 +155,8 @@ button-clear-all-mappings = Clear all mappings
 load-default-mappings-confirm = Load default emulator save mappings? This will add common emulators (if not already present) such as RPCS3, DeSmuME, Dolphin, PCSX2, and others.
 clear-all-mappings-confirm = Are you sure you want to clear all emulator save mappings?
 emulated-game-configured = Emulated game configured: { $game } ? { $customTitle }
+
+no-save-file-found = No save file found for { $game }. Add manually?
+
+config-emulator-custom-paths = Emulator custom paths
+config-emulator-custom-paths-help = Add custom paths for emulators that aren't installed in standard locations (e.g., RPCS3 portable install). The system will search these paths when looking for save data.

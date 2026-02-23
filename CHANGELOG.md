@@ -1,3 +1,115 @@
+## v0.19.8 (2026-02-23)
+
+* Fixed:
+  * **Ryujinx: Title ID lookup from metadata.json** — when the ROM filename and GameId
+    do not contain a Title ID (e.g., NCA files with hash names), the plugin now scans
+    Ryujinx's `games/{TitleID}/gui/metadata.json` files and matches the game name
+    from Playnite against the `title` field. This uses normalized, accent-insensitive
+    comparison with containment fallback for subtitle differences.
+  * **Prevented `**` wildcard fallthrough for Ryujinx/Yuzu** — when the emulator is
+    detected but no save folder is found, the plugin now returns an empty result instead
+    of falling through to the template `<appData>/Ryujinx/bis/user/save/**` which would
+    back up ALL save folders for every game, causing duplicates.
+
+## v0.19.7 (2026-02-22)
+
+* Fixed:
+  * **Custom game entries now include `winePrefix: []`** to match ludusavi's full config schema.
+    The ludusavi GUI may drop entries that are missing this field when it re-saves the config.
+  * **Stripped YAML document end marker (`...`)** from config.yaml output.
+    YamlDotNet adds this marker which could confuse ludusavi's config parser when re-reading.
+  * **Pre-backup validation**: before running a backup, the plugin now verifies that the custom game
+    entry still exists in ludusavi's config.yaml. If the entry was removed (e.g., by ludusavi's GUI
+    normalizing the config), the plugin automatically re-creates it instead of crashing.
+  * **Exit code 101 (Rust panic) recovery**: if ludusavi panics during backup of a custom game,
+    the plugin now treats this as "game not found" and attempts auto-reconfiguration instead of
+    showing "impossibile avviare ludusavi" with no recovery.
+
+## v0.19.6 (2026-02-22)
+
+* Added:
+  * **Ryujinx save finder**: dedicated save detection for Nintendo Switch games emulated via Ryujinx.
+    Instead of backing up the entire `bis/user/save/` directory, the plugin now reads each save folder's
+    `ExtraData0` binary to extract the Title ID and matches it against the game's Title ID.
+    Only the correct per-game save folder(s) are backed up.
+  * **Yuzu save finder**: same Title ID-based save detection for Yuzu, using the same ExtraData0 approach.
+  * Title ID extraction from ROM filenames (supports `[0100152000022000]` bracket format and bare 16-hex-digit patterns),
+    Playnite GameId, and ROM directory path segments.
+  * Custom path support for Ryujinx/Yuzu in the emulator custom paths settings table.
+* Fixed:
+  * Ryujinx/Yuzu: no longer backs up the entire save directory when only one game's saves are needed.
+
+## v0.19.5 (2026-02-22)
+
+* Added:
+  * **Per-emulator save finders**: dedicated save detection logic for PPSSPP (PlayStation Portable),
+    Dolphin (GameCube/Wii), and Citra (Nintendo 3DS), in addition to the existing RPCS3 finder.
+    Each finder knows the emulator's save folder structure and searches common installation paths.
+  * **Emulator custom paths table**: new settings UI to configure custom paths for emulators
+    not installed in standard locations (e.g., portable RPCS3/PPSSPP installs).
+    Replaces the single RPCS3 path with a general-purpose table for any emulator.
+  * **Manual save folder selection**: when automatic detection fails, the plugin now asks
+    "No save file found. Add manually?" and opens a folder browser if the user confirms.
+    If the user declines, the operation is cancelled gracefully.
+  * PSP game code extraction (ULUS/UCUS format) for PPSSPP save matching.
+  * Italian translations for all new UI strings.
+* Changed:
+  * `EmulatedSaveTemplate.ResolveMany()` now routes to per-emulator save finders before
+    falling back to generic template resolution.
+  * Emulator custom paths from the settings table take priority over the legacy RPCS3SaveDataPath.
+  * RPCS3 detailed logging moved to a dedicated `LogRpcs3DetailedSearch()` helper method.
+* Fixed:
+  * Backward compatibility: the legacy `RPCS3SaveDataPath` setting continues to work as fallback.
+
+## v0.19.4 (2026-01-26)
+
+* Added:
+  * Enhanced automatic PS3 game code detection for RPCS3 games.
+    The system now searches existing save folders and matches game names when the code cannot be extracted from ROM path, Game ID, or game name.
+  * Support for searching PS3 game codes in `titleid.txt` file when other methods fail.
+    The file is automatically searched in the plugin directory, `data/` subdirectory, and repository root.
+    **NEW**: The system now extracts ALL matching codes from `titleid.txt` (games can have multiple regional codes)
+    and tries each code against existing save folders to find the one that actually exists on disk.
+  * Support for "dirty" save folder names with additional characters after the PS3 game code
+    (e.g., `BCES00052_SAVE_1`, `BLES01459-00-FIXED-`, `NPEA00385_RC1_SAVEDATA_A`).
+  * Improved game name matching with normalization that handles special characters, common suffixes, and variations.
+  * **NEW**: Enhanced logging system that writes logs to both the plugin directory AND the project directory (if detected).
+    Log files are saved in `logs/LudusaviPlaynite_YYYY-MM-DD.log` in both locations for easier debugging.
+    Logging now includes detailed diagnostic information about DLL location, build time, and titleid.txt file detection.
+  * **NEW**: Comprehensive RPCS3 logging that shows:
+    - All search paths checked (with existence status and folder counts)
+    - Step-by-step code search process (direct extraction, titleid.txt search, folder matching)
+    - Each candidate code tested against save folders
+    - Detailed folder listings when save folders are not found
+    - Complete auto-configuration flow with success/failure indicators
+  * **NEW**: Automatic detection of PS3 games by platform name.
+    Games with "PlayStation 3" or "PS3" in the platform name are now automatically treated as RPCS3 emulated games,
+    even if they don't have an Emulator action configured in Playnite.
+* Changed:
+  * Improved PS3 game code extraction regex pattern to handle codes followed by underscores, hyphens, or other non-alphanumeric characters.
+  * Enhanced save folder matching to work with folder names that contain game codes plus additional text.
+  * Auto-configuration for emulated games now triggers even when Ludusavi returns exit code 1 (no data found),
+    not just when UnknownGames error is present.
+  * Improved matching algorithm for long game names by extracting and matching key words.
+  * **IMPROVED**: When searching `titleid.txt`, the system now tries ALL matching codes against save folders,
+    not just the first match. This fixes issues where games have multiple regional codes (e.g., BCES00052, BLES01459, etc.)
+    and the first code in the file doesn't match the actual save folder on disk.
+  * **IMPROVED**: RPCS3 path resolution now requires actual save folder existence before proceeding,
+    ensuring proper fallback to titleid.txt scanning when needed.
+  * **CHANGED**: `titleid.txt` moved to `data/` directory for better repository organization.
+    The system now searches for the file in multiple locations: plugin directory, `data/` subdirectory, and repository root.
+* Fixed:
+  * RPCS3 games with save folders that have "dirty" names (containing additional characters after the game code) are now correctly detected and configured.
+  * Auto-configuration for emulated games now works correctly when Ludusavi returns exit code 1 with "no data found" message.
+  * Improved game name matching for games with long titles (e.g., "Ratchet & Clank Future: Tools of Destruction").
+  * **FIXED**: Games with multiple codes in `titleid.txt` (like "Ratchet & Clank Future: Tools of Destruction" with 9+ codes)
+    now correctly find the code that matches the actual save folder (e.g., BCES00052) even if it's not the first code in the file.
+  * **FIXED**: Games with PS3 platform are now automatically detected as RPCS3 emulated games,
+    even if they don't have an Emulator action configured in Playnite. This fixes the issue where games imported from
+    certain sources (like FastInstall) were not recognized as emulated.
+  * **FIXED**: Improved logging system with better error handling and directory creation verification.
+    Log files are now reliably created even if the directory doesn't exist initially.
+
 ## v0.19.3 (2026-01-22)
 
 * Added:

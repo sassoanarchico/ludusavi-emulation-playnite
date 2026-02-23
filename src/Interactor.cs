@@ -142,6 +142,29 @@ namespace LudusaviPlaynite
             return result.Result ? result.SelectedString : null;
         }
 
+        /// <summary>
+        /// Asks the user to manually select a save folder/file when automatic detection fails.
+        /// Returns the selected path, or null if the user cancelled.
+        /// </summary>
+        public string AskManualSavePath(string gameName)
+        {
+            var message = translator.NoSaveFileFound(gameName);
+            var choice = PlayniteApi.Dialogs.ShowMessage(message, translator.Ludusavi(), System.Windows.MessageBoxButton.YesNo);
+            if (choice != MessageBoxResult.Yes)
+            {
+                return null;
+            }
+
+            // Open folder browser
+            var selectedFolder = PlayniteApi.Dialogs.SelectFolder();
+            if (!string.IsNullOrWhiteSpace(selectedFolder))
+            {
+                return selectedFolder;
+            }
+
+            return null;
+        }
+
         public bool AddTag(Game game, string tagName)
         {
             var dbTag = PlayniteApi.Database.Tags.FirstOrDefault(tag => tag.Name == tagName);

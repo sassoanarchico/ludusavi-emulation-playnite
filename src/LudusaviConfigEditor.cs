@@ -64,7 +64,7 @@ namespace LudusaviPlaynite
                 var filesNode = new YamlSequenceNode(list.Select(x => (YamlNode)new YamlScalarNode(x)));
                 existing.Children[new YamlScalarNode("files")] = filesNode;
 
-                // Ensure other required fields are present
+                // Ensure other required fields are present (Ludusavi requires these)
                 if (!existing.Children.ContainsKey(new YamlScalarNode("registry")))
                 {
                     existing.Children[new YamlScalarNode("registry")] = new YamlSequenceNode();
@@ -73,11 +73,26 @@ namespace LudusaviPlaynite
                 {
                     existing.Children[new YamlScalarNode("installDir")] = new YamlSequenceNode();
                 }
+                if (!existing.Children.ContainsKey(new YamlScalarNode("winePrefix")))
+                {
+                    existing.Children[new YamlScalarNode("winePrefix")] = new YamlSequenceNode();
+                }
 
-                using (var writer = new StreamWriter(configPath, false, new UTF8Encoding(false)))
+                // Serialize via YamlDotNet then strip the document end marker ("...")
+                // that YamlDotNet appends; ludusavi's GUI may re-save the config and
+                // drop entries that come before a stray "..." marker.
+                string yamlText;
+                using (var writer = new StringWriter())
                 {
                     yaml.Save(writer, false);
+                    yamlText = writer.ToString();
                 }
+
+                // Remove trailing "..." document end marker + any surrounding whitespace
+                yamlText = System.Text.RegularExpressions.Regex.Replace(
+                    yamlText, @"\s*\.\.\.\s*$", "\n");
+
+                File.WriteAllText(configPath, yamlText, new UTF8Encoding(false));
 
                 return true;
             }

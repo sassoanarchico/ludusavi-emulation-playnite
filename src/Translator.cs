@@ -781,5 +781,25 @@ namespace LudusaviPlaynite
                 }
             );
         }
+
+        public string NoSaveFileFound(string game)
+        {
+            return Translate(
+                "no-save-file-found",
+                new FluentArgs() {
+                    {GAME, (FluentString)game}
+                }
+            );
+        }
+
+        public string EmulatorCustomPaths_Label()
+        {
+            return Translate("config-emulator-custom-paths");
+        }
+
+        public string EmulatorCustomPaths_Help()
+        {
+            return Translate("config-emulator-custom-paths-help");
+        }
     }
 }

@@ -137,3 +137,8 @@ button-clear-all-mappings = Cancella tutte le mappature
 load-default-mappings-confirm = Caricare le mappature di salvataggio predefinite degli emulatori? Questo aggiungerà emulatori comuni (se non già presenti) come RPCS3, DeSmuME, Dolphin, PCSX2 e altri.
 clear-all-mappings-confirm = Sei sicuro di voler cancellare tutte le mappature di salvataggio degli emulatori?
 emulated-game-configured = Gioco emulato configurato: { $game } → { $customTitle }
+
+no-save-file-found = Nessun file di salvataggio trovato per { $game }. Aggiungere manualmente?
+
+config-emulator-custom-paths = Percorsi personalizzati emulatori
+config-emulator-custom-paths-help = Aggiungi percorsi personalizzati per emulatori non installati in posizioni standard (es. RPCS3 portatile). Il sistema cercherà in questi percorsi i dati di salvataggio.

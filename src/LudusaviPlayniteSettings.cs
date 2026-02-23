@@ -23,6 +23,33 @@ namespace LudusaviPlaynite
         Zstd,
     }
 
+    /// <summary>
+    /// Stores a custom path for an emulator (e.g., RPCS3 portable install, PPSSPP memstick path).
+    /// </summary>
+    public class EmulatorPathSetting : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void Notify(string prop) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+
+        private string emulatorName = "";
+        public string EmulatorName { get { return emulatorName; } set { emulatorName = value; Notify("EmulatorName"); } }
+
+        private string customPath = "";
+        public string CustomPath { get { return customPath; } set { customPath = value; Notify("CustomPath"); } }
+
+        private string description = "";
+        public string Description { get { return description; } set { description = value; Notify("Description"); } }
+
+        public EmulatorPathSetting() { }
+
+        public EmulatorPathSetting(string emulatorName, string customPath, string description = "")
+        {
+            EmulatorName = emulatorName;
+            CustomPath = customPath;
+            Description = description;
+        }
+    }
+
     public class LudusaviPlayniteSettings : ISettings, INotifyPropertyChanged
     {
         private readonly LudusaviPlaynite plugin;
@@ -161,10 +188,17 @@ namespace LudusaviPlaynite
         [JsonIgnore]
         public string CheckAppUpdate_Label { get; set; }
 
-        // --- RPCS3 custom savedata path ---
+        // --- RPCS3 custom savedata path (legacy, migrated to EmulatorCustomPaths) ---
         public string RPCS3SaveDataPath { get; set; } = "";
         [JsonIgnore]
         public string RPCS3SaveDataPath_Label { get; set; }
+
+        // --- Emulator custom paths table ---
+        public ObservableCollection<EmulatorPathSetting> EmulatorCustomPaths { get; set; } = new ObservableCollection<EmulatorPathSetting>();
+        [JsonIgnore]
+        public string EmulatorCustomPaths_Label { get; set; }
+        [JsonIgnore]
+        public string EmulatorCustomPaths_Help { get; set; }
 
         // --- Emulated games support (optional) ---
         public bool EnableEmulatedGameAutomation { get; set; } = false;
@@ -250,6 +284,8 @@ namespace LudusaviPlaynite
             EmulatedSaveMappings_Help = translator.EmulatedSaveMappings_Help();
             LoadDefaultMappings_Label = translator.LoadDefaultMappings_Label();
             ClearAllMappings_Label = translator.ClearAllMappings_Label();
+            EmulatorCustomPaths_Label = translator.EmulatorCustomPaths_Label();
+            EmulatorCustomPaths_Help = translator.EmulatorCustomPaths_Help();
             DisabledLibraries_Label = translator.DisabledLibraries_Label();
             DisabledLibraries_Help = translator.DisabledLibraries_Help();
 
@@ -339,6 +375,28 @@ namespace LudusaviPlaynite
                 {
                     DisabledLibraries = new List<string>(savedSettings.DisabledLibraries);
                 }
+                if (savedSettings.EmulatorCustomPaths != null && savedSettings.EmulatorCustomPaths.Count > 0)
+                {
+                    EmulatorCustomPaths = new ObservableCollection<EmulatorPathSetting>(savedSettings.EmulatorCustomPaths);
+                }
+
+                // Migrate legacy RPCS3SaveDataPath into EmulatorCustomPaths if not already there
+                if (!string.IsNullOrWhiteSpace(RPCS3SaveDataPath))
+                {
+                    bool hasRpcs3 = false;
+                    foreach (var ep in EmulatorCustomPaths)
+                    {
+                        if (ep.EmulatorName != null && ep.EmulatorName.Trim().ToLowerInvariant() == "rpcs3")
+                        {
+                            hasRpcs3 = true;
+                            break;
+                        }
+                    }
+                    if (!hasRpcs3)
+                    {
+                        EmulatorCustomPaths.Add(new EmulatorPathSetting("RPCS3", RPCS3SaveDataPath.Trim(), "PS3 savedata path"));
+                    }
+                }
             }
             else
             {
@@ -403,6 +461,37 @@ namespace LudusaviPlaynite
         public string AlternativeTitle(Game game)
         {
             return Etc.GetDictValue(this.AlternativeTitles, game.Name, null);
+        }
+
+        /// <summary>
+        /// Returns the custom path for the given emulator name (case-insensitive).
+        /// Falls back to RPCS3SaveDataPath for backward compat if emulator is rpcs3.
+        /// </summary>
+        public string GetEmulatorCustomPath(string emulatorName)
+        {
+            if (string.IsNullOrWhiteSpace(emulatorName)) return null;
+            var lower = emulatorName.Trim().ToLowerInvariant();
+
+            if (EmulatorCustomPaths != null)
+            {
+                foreach (var ep in EmulatorCustomPaths)
+                {
+                    if (!string.IsNullOrWhiteSpace(ep.EmulatorName) &&
+                        ep.EmulatorName.Trim().ToLowerInvariant() == lower &&
+                        !string.IsNullOrWhiteSpace(ep.CustomPath))
+                    {
+                        return ep.CustomPath.Trim();
+                    }
+                }
+            }
+
+            // Legacy fallback for RPCS3
+            if (lower.Contains("rpcs3") && !string.IsNullOrWhiteSpace(RPCS3SaveDataPath))
+            {
+                return RPCS3SaveDataPath.Trim();
+            }
+
+            return null;
         }
 
         public string GetDisplayName(Game game, BackupCriteria criteria)

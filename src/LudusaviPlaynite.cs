@@ -1,4 +1,4 @@
-﻿using Playnite.SDK;
+using Playnite.SDK;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using Playnite.SDK.Events;
@@ -35,7 +35,41 @@ namespace LudusaviPlaynite
             // Inizializza il logger personalizzato
             string logDirectory = Path.Combine(GetPluginUserDataPath(), "logs");
             logger = new CustomLogger(LogManager.GetLogger(), logDirectory);
-            logger.Info("LudusaviPlaynite plugin initialized");
+            try
+            {
+                var asm = System.Reflection.Assembly.GetExecutingAssembly();
+                var asmLocation = asm?.Location ?? "(unknown)";
+                var asmDir = "";
+                try { asmDir = Path.GetDirectoryName(asmLocation) ?? ""; } catch { }
+                var dllWriteTime = "";
+                try { dllWriteTime = File.Exists(asmLocation) ? File.GetLastWriteTime(asmLocation).ToString("yyyy-MM-dd HH:mm:ss") : "(n/a)"; } catch { dllWriteTime = "(n/a)"; }
+                var cwd = "";
+                try { cwd = Directory.GetCurrentDirectory(); } catch { cwd = "(unknown)"; }
+                var titleInAsm = "";
+                try 
+                { 
+                    titleInAsm = Path.Combine(asmDir, "titleid.txt"); 
+                    if (!File.Exists(titleInAsm)) 
+                        titleInAsm = Path.Combine(asmDir, "data", "titleid.txt"); 
+                } 
+                catch { titleInAsm = ""; }
+                var titleInCwd = "";
+                try 
+                { 
+                    titleInCwd = Path.Combine(cwd, "titleid.txt"); 
+                    if (!File.Exists(titleInCwd)) 
+                        titleInCwd = Path.Combine(cwd, "data", "titleid.txt"); 
+                } 
+                catch { titleInCwd = ""; }
+
+                logger.Info("LudusaviPlaynite plugin initialized");
+                logger.Info($"Build/Load info: dll={asmLocation} | lastWrite={dllWriteTime} | cwd={cwd}");
+                logger.Info($"titleid.txt check: inDllDir={(File.Exists(titleInAsm) ? "YES" : "NO")} ({titleInAsm}) | inCwd={(File.Exists(titleInCwd) ? "YES" : "NO")} ({titleInCwd})");
+            }
+            catch
+            {
+                logger.Info("LudusaviPlaynite plugin initialized");
+            }
 
             translator = new Translator(PlayniteApi.ApplicationSettings.Language);
             settings = new LudusaviPlayniteSettings(this, translator);
@@ -726,6 +760,8 @@ namespace LudusaviPlaynite
             customTitle = null;
             error = null;
 
+            logger.Info($"TryAutoConfigureEmulatedGame invoked for game: '{game?.Name ?? "(null)"}'");
+
             // Check if this game already has an alternative title configured
             var existingTitle = settings.AlternativeTitle(game);
             if (!string.IsNullOrEmpty(existingTitle))
@@ -758,13 +794,81 @@ namespace LudusaviPlaynite
                 }
             }
 
+            logger.Info($"TryAutoConfigureEmulatedGame invoked for '{game?.Name ?? "(null)"}' (EnableEmulatedGameAutomation: {this.settings.EnableEmulatedGameAutomation})");
+
             if (!this.settings.EnableEmulatedGameAutomation)
             {
+                error = "Emulated game auto-configuration is disabled in plugin settings (EnableEmulatedGameAutomation=false).";
+                logger.Warn(error);
                 return false;
             }
 
-            if (!EmulationDetector.TryGetInfo(game, this.PlayniteApi, out var info) || !info.IsEmulated)
+            var detected = EmulationDetector.TryGetInfo(game, this.PlayniteApi, out var info);
+            
+            // Fallback: if game has PS3 platform but wasn't detected as emulated, treat it as RPCS3
+            if ((!detected || !info.IsEmulated) && info != null)
             {
+                var platform = info.Platform ?? "";
+                var platformLower = platform.ToLowerInvariant();
+                
+                // Check if this is a PS3 game based on platform name
+                if (platformLower.Contains("playstation 3") || platformLower.Contains("ps3") || 
+                    platformLower.Contains("sony playstation 3"))
+                {
+                    logger.Info($"Game has PS3 platform but wasn't detected as emulated. Treating as RPCS3 emulated game.");
+                    logger.Info($"  Platform: {platform}");
+                    logger.Info($"  GameId: {info.GameId ?? "(empty)"}");
+                    
+                    // Force it to be treated as emulated RPCS3
+                    info.IsEmulated = true;
+                    info.Platform = "PlayStation 3";
+                    info.EmulatorName = "RPCS3";
+                    // Try to find RPCS3 executable in common locations
+                    var commonRpcs3Paths = new[]
+                    {
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "RPCS3", "rpcs3.exe"),
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Documents", "RPCS3", "rpcs3.exe"),
+                        @"C:\RPCS3\rpcs3.exe",
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "RPCS3", "rpcs3.exe"),
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "RPCS3", "rpcs3.exe")
+                    };
+                    
+                    foreach (var rpcs3Path in commonRpcs3Paths)
+                    {
+                        if (File.Exists(rpcs3Path))
+                        {
+                            info.EmulatorExecutablePath = rpcs3Path;
+                            logger.Info($"  Found RPCS3 at: {rpcs3Path}");
+                            break;
+                        }
+                    }
+                    
+                    if (string.IsNullOrEmpty(info.EmulatorExecutablePath))
+                    {
+                        logger.Warn($"  RPCS3 executable not found in common locations. Will use default paths.");
+                    }
+                }
+                else
+                {
+                    error =
+                        "Game was not detected as emulated by EmulationDetector.\n" +
+                        $"  Detected: {detected}\n" +
+                        $"  IsEmulated: {info?.IsEmulated}\n" +
+                        $"  Platform: {info?.Platform ?? "(empty)"}\n" +
+                        $"  EmulatorName: {info?.EmulatorName ?? "(empty)"}\n" +
+                        $"  EmulatorExecutablePath: {info?.EmulatorExecutablePath ?? "(empty)"}\n" +
+                        $"  RomPath: {info?.RomPath ?? "(empty)"}\n" +
+                        $"  GameId: {info?.GameId ?? "(empty)"}\n" +
+                        "To fix: ensure the Play action is an Emulator action and/or the game has a ROM configured in Playnite.";
+                    logger.Warn(error);
+                    return false;
+                }
+            }
+            
+            if (!info.IsEmulated)
+            {
+                error = "Game is not emulated and platform fallback did not apply.";
+                logger.Warn(error);
                 return false;
             }
 
@@ -792,6 +896,17 @@ namespace LudusaviPlaynite
 
             if (match == null)
             {
+                var enabledNeedles = string.Join(", ",
+                    mappings
+                        .Where(m => m != null && m.Enabled && !string.IsNullOrWhiteSpace(m.EmulatorMatch))
+                        .Select(m => (m.EmulatorMatch ?? "").Trim())
+                );
+                error =
+                    "No enabled emulated save mapping matched this emulator.\n" +
+                    $"  Emulator haystack: '{haystack}'\n" +
+                    $"  Enabled mappings (EmulatorMatch): {(string.IsNullOrWhiteSpace(enabledNeedles) ? "(none)" : enabledNeedles)}\n" +
+                    "To fix: enable a mapping that matches this emulator (e.g., EmulatorMatch contains 'rpcs3').";
+                logger.Warn(error);
                 return false;
             }
 
@@ -809,19 +924,84 @@ namespace LudusaviPlaynite
             info.EmulatorName = emulatorLabel;
 
             // Log info for debugging
-            logger.Info($"Emulated game auto-config: {game.Name} | GameId: {info.GameId} | Emulator: {info.EmulatorName} | Platform: {platformLabel}");
+            logger.Info($"=== EMULATED GAME AUTO-CONFIG START ===");
+            logger.Info($"Game: {game.Name}");
+            logger.Info($"GameId: {info.GameId ?? "(empty)"}");
+            logger.Info($"Emulator: {info.EmulatorName ?? "(empty)"}");
+            logger.Info($"Emulator Executable Path: {info.EmulatorExecutablePath ?? "(empty)"}");
+            logger.Info($"Platform: {platformLabel}");
+            logger.Info($"RomPath: {info.RomPath ?? "(empty)"}");
             logger.Info($"Template: {match.SavePathTemplates}");
 
+            // Build emulator custom paths dictionary for save finders
+            var emulatorCustomPaths = new Dictionary<string, string>();
+            if (settings.EmulatorCustomPaths != null)
+            {
+                foreach (var ep in settings.EmulatorCustomPaths)
+                {
+                    if (!string.IsNullOrWhiteSpace(ep.EmulatorName) && !string.IsNullOrWhiteSpace(ep.CustomPath))
+                    {
+                        emulatorCustomPaths[ep.EmulatorName.Trim()] = ep.CustomPath.Trim();
+                    }
+                }
+            }
+
             // For RPCS3, try to extract PS3 game code and find save folder dynamically
-            var paths = EmulatedSaveTemplate.ResolveMany(info, match.SavePathTemplates, game.Name, settings.RPCS3SaveDataPath);
+            var paths = EmulatedSaveTemplate.ResolveMany(info, match.SavePathTemplates, game.Name, settings.RPCS3SaveDataPath, emulatorCustomPaths);
 
             logger.Info($"Resolved paths: {string.Join(", ", paths)}");
+            
+            // Log search paths for debugging when paths are empty
+            if (paths.Count == 0)
+            {
+                var emulatorLower = ((info?.EmulatorName ?? "") + " " + (info?.EmulatorExecutablePath ?? "")).ToLowerInvariant();
+                if (emulatorLower.Contains("rpcs3"))
+                {
+                    var rpcs3CustomPath = settings.GetEmulatorCustomPath("rpcs3") ?? settings.RPCS3SaveDataPath;
+                    var searchPaths = RPCS3SaveFinder.GetCommonRPCS3SavePaths(info?.EmulatorExecutablePath, rpcs3CustomPath);
+                    logger.Info($"RPCS3 search paths checked: {string.Join(", ", searchPaths)}");
+                    logger.Info($"Game name for matching: '{game.Name}'");
+                    LogRpcs3DetailedSearch(info, game, searchPaths);
+                }
+                else if (emulatorLower.Contains("ppsspp"))
+                {
+                    var savedataPaths = PPSSPPSaveFinder.GetSavedataPaths(info?.EmulatorExecutablePath, settings.GetEmulatorCustomPath("ppsspp"));
+                    logger.Info($"PPSSPP search paths checked: {string.Join(", ", savedataPaths)}");
+                    var pspCode = PPSSPPSaveFinder.ExtractPSPGameCode(info, game.Name);
+                    logger.Info($"PSP game code: {pspCode ?? "(not found)"}");
+                }
+                else
+                {
+                    logger.Info($"No save paths resolved for emulator: {info?.EmulatorName ?? "(unknown)"}");
+                }
+            }
 
             if (!paths.Any())
             {
-                error = "No save paths resolved.";
-                logger.Warn($"Failed to resolve save paths for emulated game: {game.Name}");
-                return false;
+                // --- MANUAL FALLBACK: ask user to select save folder ---
+                logger.Info($"No save paths found automatically for '{game.Name}'. Asking user for manual selection.");
+                
+                string manualPath = null;
+                try
+                {
+                    manualPath = interactor.AskManualSavePath(game.Name);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Error asking user for manual save path");
+                }
+
+                if (!string.IsNullOrWhiteSpace(manualPath))
+                {
+                    logger.Info($"User selected manual save path: {manualPath}");
+                    paths = new List<string> { manualPath };
+                }
+                else
+                {
+                    error = $"No save paths found for '{game.Name}' and user did not provide a manual path.";
+                    logger.Warn(error);
+                    return false;
+                }
             }
 
             // Validate that at least one path exists before configuring
@@ -838,18 +1018,29 @@ namespace LudusaviPlaynite
                 }
             }
 
-            logger.Info($"Valid paths for backup: {string.Join(", ", validPaths)}");
+            logger.Info($"Valid paths for backup ({validPaths.Count}): {string.Join(", ", validPaths)}");
 
             // Use valid paths if we filtered them, otherwise use all resolved paths
             var pathsToUse = validPaths.Any() ? validPaths : paths;
 
+            logger.Info($"--- CREATING CUSTOM LUDUSAVI ENTRY ---");
+            logger.Info($"Custom Title: '{customTitle}'");
+            logger.Info($"Paths ({pathsToUse.Count}):");
+            foreach (var path in pathsToUse)
+            {
+                var exists = Directory.Exists(path) || File.Exists(path);
+                logger.Info($"  - {path} [Exists: {exists}]");
+            }
+
             if (!LudusaviConfigEditor.UpsertCustomGame(this.settings.ExecutablePath, customTitle, pathsToUse, out error))
             {
-                logger.Error($"Failed to upsert custom game '{customTitle}' with paths: {string.Join(", ", pathsToUse)}. Error: {error}");
+                logger.Error($"✗ Failed to upsert custom game '{customTitle}' with paths: {string.Join(", ", pathsToUse)}. Error: {error}");
+                logger.Info($"=== EMULATED GAME AUTO-CONFIG FAILED ===");
                 return false;
             }
 
-            logger.Info($"Successfully configured custom game '{customTitle}' with {pathsToUse.Count} path(s)");
+            logger.Info($"✓ Successfully configured custom game '{customTitle}' with {pathsToUse.Count} path(s)");
+            logger.Info($"=== EMULATED GAME AUTO-CONFIG SUCCESS ===");
 
             // Persist a stable lookup name so subsequent backups/restores use the created custom entry.
             this.settings.AlternativeTitles[game.Name] = customTitle;
@@ -860,6 +1051,53 @@ namespace LudusaviPlaynite
             interactor.NotifyInfo(translator.EmulatedGameConfigured(game.Name, customTitle));
 
             return true;
+        }
+
+        /// <summary>
+        /// Logs detailed RPCS3 game code search info for debugging.
+        /// </summary>
+        private void LogRpcs3DetailedSearch(EmulationInfo info, Game game, List<string> searchPaths)
+        {
+            try
+            {
+                // Try to find titleid.txt
+                var titleIdPath = "";
+                var assemblyLocation = System.Reflection.Assembly.GetExecutingAssembly()?.Location;
+                if (!string.IsNullOrEmpty(assemblyLocation))
+                {
+                    var assemblyDir = Path.GetDirectoryName(assemblyLocation);
+                    titleIdPath = Path.Combine(assemblyDir, "titleid.txt");
+                    if (!File.Exists(titleIdPath))
+                        titleIdPath = Path.Combine(assemblyDir, "data", "titleid.txt");
+                }
+                if (!File.Exists(titleIdPath ?? ""))
+                    titleIdPath = Path.Combine(Directory.GetCurrentDirectory(), "titleid.txt");
+                if (!File.Exists(titleIdPath ?? ""))
+                    titleIdPath = Path.Combine(Directory.GetCurrentDirectory(), "data", "titleid.txt");
+
+                logger.Info($"--- RPCS3 GAME CODE SEARCH ---");
+                logger.Info($"Game Name: '{game.Name}'");
+                logger.Info($"TitleId file: {titleIdPath ?? "(not found)"} [Exists: {File.Exists(titleIdPath ?? "")}]");
+                logger.Info($"Search paths ({searchPaths.Count}):");
+                foreach (var path in searchPaths)
+                {
+                    var exists = Directory.Exists(path);
+                    logger.Info($"  - {path} [Exists: {exists}]");
+                }
+
+                var directCode = RPCS3SaveFinder.ExtractPS3GameCode(info, game.Name);
+                logger.Info($"Direct extraction: {directCode ?? "(none)"}");
+
+                if (File.Exists(titleIdPath ?? ""))
+                {
+                    var titleIdCodes = RPCS3SaveFinder.FindAllPS3GameCodesInTitleIdFile(game.Name, titleIdPath);
+                    logger.Info($"titleid.txt codes: {(titleIdCodes?.Count > 0 ? string.Join(", ", titleIdCodes) : "(none)")}");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Warn($"Error in RPCS3 detailed search logging: {ex.Message}");
+            }
         }
 
         private string FindGame(Game game, string name, OperationTiming timing, BackupCriteria criteria, Mode mode)
@@ -914,9 +1152,27 @@ namespace LudusaviPlaynite
             var officialName = response?.Games.Keys.FirstOrDefault();
             if (code != 0 || officialName == null)
             {
-                if (criteria.ByGame() && TryAutoConfigureEmulatedGame(game, out var customTitle, out var autoError))
+                // Try auto-configuration for emulated games if Ludusavi didn't find the game
+                if (criteria.ByGame())
                 {
-                    return customTitle;
+                    logger.Info($"Ludusavi did not find game '{game.Name}' (exit code: {code}, officialName: {officialName ?? "null"}). Attempting auto-configuration for emulated games.");
+                    logger.Info($"About to call TryAutoConfigureEmulatedGame for '{game.Name}'...");
+                    try
+                    {
+                        if (TryAutoConfigureEmulatedGame(game, out var customTitle, out var autoError))
+                    {
+                        logger.Info($"Auto-configuration successful for '{game.Name}': using custom title '{customTitle}'");
+                        return customTitle;
+                    }
+                    else if (!string.IsNullOrEmpty(autoError))
+                    {
+                        logger.Warn($"Auto-configuration failed for '{game.Name}': {autoError}");
+                    }
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, $"Exception in TryAutoConfigureEmulatedGame for '{game.Name}'");
+                    }
                 }
                 interactor.NotifyError(translator.UnrecognizedGame(name), timing);
                 HandleFailureDuringPlay();
@@ -1058,17 +1314,70 @@ namespace LudusaviPlaynite
                 }
             }
 
+            // PRE-BACKUP VALIDATION: if this game has a custom alternative title,
+            // verify the entry still exists in config.yaml before running the backup.
+            // The ludusavi GUI may have re-saved the config and dropped our custom entry.
+            if (criteria.ByGame())
+            {
+                var altTitle = settings.AlternativeTitle(game);
+                if (!string.IsNullOrEmpty(altTitle))
+                {
+                    try
+                    {
+                        if (!LudusaviConfigEditor.CustomGameExists(settings.ExecutablePath, altTitle))
+                        {
+                            logger.Warn($"Custom game entry '{altTitle}' is missing from ludusavi config. Re-creating it.");
+                            // Force re-creation by clearing the stale alternative title
+                            settings.AlternativeTitles.Remove(game.Name);
+                            SavePluginSettings(settings);
+                            // Trigger auto-configuration to re-create the entry
+                            if (TryAutoConfigureEmulatedGame(game, out var recreatedTitle, out var recreateError))
+                            {
+                                logger.Info($"Re-created custom game entry: '{recreatedTitle}'");
+                                name = recreatedTitle;
+                                displayName = $"{displayName} (↪ {name})";
+                            }
+                            else
+                            {
+                                logger.Warn($"Failed to re-create custom game entry: {recreateError}");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Warn($"Error checking custom game existence: {ex.Message}");
+                    }
+                }
+            }
+
             var invocation = new Cli.Invocation(Mode.Backup).PathIf(settings.BackupPath, settings.OverrideBackupPath).Game(name);
 
             var (code, response) = app.Invoke(invocation);
 
-            if (criteria.ByGame() && response?.Errors.UnknownGames != null)
+            // Try auto-configuration for emulated games if:
+            // 1. Ludusavi returned unknown games error, OR
+            // 2. Ludusavi returned exit code 1 (no data found) which might indicate an unrecognized emulated game
+            // 3. Ludusavi panicked (exit code 101) - could happen if a custom entry was corrupted
+            // Note: Ludusavi can return exit code 1 ("no data found") with an *empty* games dictionary (not null).
+            // Also note: `response` is `Cli.Output.Response?` (nullable struct), so we must use null-safe access.
+            // We treat both null and empty as "no games found" to trigger emulated auto-configuration.
+            if (criteria.ByGame() && (response?.Errors.UnknownGames != null || code == 101 || (code == 1 && ((response?.Games == null) || ((response?.Games?.Count ?? 0) == 0)))))
             {
+                logger.Info($"Attempting auto-configuration for emulated game: {game.Name} (Ludusavi exit code: {code}, UnknownGames: {response?.Errors.UnknownGames != null})");
                 if (TryAutoConfigureEmulatedGame(game, out var customTitle, out var autoError))
                 {
+                    logger.Info($"Auto-configuration successful for '{game.Name}': using custom title '{customTitle}'");
                     name = customTitle;
                     displayName = $"{displayName} (↪ {name})";
                     (code, response) = app.Invoke(invocation.Game(name));
+                }
+                else if (!string.IsNullOrEmpty(autoError))
+                {
+                    logger.Warn($"Auto-configuration failed for '{game.Name}': {autoError}");
+                }
+                else
+                {
+                    logger.Warn($"Auto-configuration failed for '{game.Name}' (no detailed error was provided).");
                 }
             }
 
