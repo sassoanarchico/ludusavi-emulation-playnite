@@ -4,7 +4,7 @@
 
 **Playnite plugin to back up your save data using Ludusavi**
 
-[![Version](https://img.shields.io/badge/version-0.19.4-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-0.19.8-blue.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Playnite%206+-purple.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
 
