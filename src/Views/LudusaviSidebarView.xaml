@@ -50,7 +50,7 @@
                 BorderBrush="#18808080" BorderThickness="0,0,0,1">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="&#xEF08;" FontFamily="Segoe MDL2 Assets"
+                    <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets"
                                FontSize="22" VerticalAlignment="Center"
                                Margin="0,0,10,0" Opacity="0.75"/>
                     <TextBlock Text="Ludusavi" FontSize="20" FontWeight="Bold"/>
@@ -68,7 +68,7 @@
                 <Button Style="{StaticResource ToolbarBtn}" Click="OpenLudusaviButton_Click"
                         ToolTip="Open Ludusavi Application">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE7AC;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                        <TextBlock Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                                    VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock Text="Open Ludusavi" VerticalAlignment="Center"/>
                     </StackPanel>
@@ -76,7 +76,7 @@
                 <Button Style="{StaticResource ToolbarBtn}" Click="BackupAllButton_Click"
                         ToolTip="Back up all games">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xEF08;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                                    VerticalAlignment="Center" Margin="0,0,6,0"/>
                         <TextBlock Text="Backup All" VerticalAlignment="Center"/>
                     </StackPanel>
@@ -137,17 +137,17 @@
                                         <Button Style="{StaticResource IconBtn}" Click="BackupGameButton_Click"
                                                 Tag="{Binding GameName}"
                                                 ToolTip="Back up this game">
-                                            <TextBlock Text="&#xEF08;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
+                                            <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
                                         </Button>
                                         <Button Style="{StaticResource IconBtn}" Click="RestoreGameButton_Click"
                                                 Tag="{Binding GameName}"
                                                 ToolTip="Restore this game">
-                                            <TextBlock Text="&#xF01C;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
+                                            <TextBlock Text="&#xE777;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
                                         </Button>
                                         <Button Style="{StaticResource IconBtn}" Click="OpenBackupFolderButton_Click"
                                                 Tag="{Binding GameName}"
                                                 ToolTip="Open backup folder">
-                                            <TextBlock Text="&#xEC5B;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
+                                            <TextBlock Text="&#xE838;" FontFamily="Segoe MDL2 Assets" FontSize="13"/>
                                         </Button>
                                     </StackPanel>
 

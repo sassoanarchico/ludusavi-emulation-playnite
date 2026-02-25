@@ -598,15 +598,33 @@ namespace LudusaviPlaynite
                 {
                     Title = "Ludusavi",
                     Type = SiderbarItemType.View,
-                    Icon = new System.Windows.Controls.TextBlock
+                    Icon = new System.Windows.Controls.Image
                     {
-                        Text = "\uEF08",
-                        FontFamily = new System.Windows.Media.FontFamily("Segoe MDL2 Assets"),
-                        FontSize = 20
+                        Source = new System.Windows.Media.Imaging.BitmapImage(
+                            new Uri(System.IO.Path.Combine(
+                                System.IO.Path.GetDirectoryName(typeof(LudusaviPlaynite).Assembly.Location),
+                                "icon_sidebar.png"))),
+                        Width = 20,
+                        Height = 20
                     },
                     Opened = () =>
                     {
-                        return new Views.LudusaviSidebarView(this);
+                        try
+                        {
+                            return new Views.LudusaviSidebarView(this);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex, "Error creating Ludusavi sidebar view");
+                            var errorControl = new System.Windows.Controls.UserControl();
+                            errorControl.Content = new System.Windows.Controls.TextBlock
+                            {
+                                Text = "Failed to load the Ludusavi sidebar. Check the Playnite log for details.",
+                                Margin = new System.Windows.Thickness(20),
+                                TextWrapping = System.Windows.TextWrapping.Wrap
+                            };
+                            return errorControl;
+                        }
                     }
                 }
             };

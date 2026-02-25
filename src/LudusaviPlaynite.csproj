@@ -13,7 +13,10 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="WindowsBase" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="PlayniteSDK" Version="6.11.0" />
+    <PackageReference Include="PlayniteSDK" Version="6.11.0">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
     <PackageReference Include="Linguini.Bundle" Version="0.3.0" />
     <PackageReference Include="IndexRange" Version="1.0.2" />
     <PackageReference Include="YamlDotNet" Version="13.7.1" />
@@ -27,6 +30,9 @@
 
   <ItemGroup>
     <None Include="../icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="icon_sidebar.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
